@@ -1,12 +1,25 @@
 main:
-    ori $a0,$zero,endereco
-    
+    addi $a0,$zero,0x10010000
+    add $a1,$zero,10
+    jal criar_vetor
+
+    add $a0,$v0,$zero
     add $a1,$zero,$zero
-    ori $a3,$zero,tamanho - 1
+    addi $a2,$zero,9
+    jal mergesort 
 
-    jal merge-sort 
+criar_vetor:    
+    loop_cria_vetor:
+    add $v0,$a0,$zero
+    sw $a1,0($a0)
+    addi $a0,$a0,4
+    addi $a1,$a1,-1
+    beq $a1,$zero,fim_cria_vetor
+    j loop_cria_vetor
+    fim_cria_vetor:
+    jr $ra
 
-merge-sort:
+mergesort:
     # b0 
     sw $fp,-4($sp)
     addi $fp,$sp,-4
@@ -25,15 +38,16 @@ merge-sort:
     srl $s0,$s0,1
 
     #b3
-    or $a2,$s0,$zero
-    jal merge-sort
+    add $a2,$s0,$zero
+    jal mergesort
 
     #b4
     lw $a2,-12($fp)
     addi $a1,$s0,1
-    jal merge-sort
+    jal mergesort
 
     #b5
+    lw $a1,-8($fp)
     add $a3,$a2,$zero
     add $a2,$s0,$zero
     jal merge
@@ -55,45 +69,40 @@ merge:
     #t1 = meio + 1(j)
     addi $t1,$a2,1
 
-    loop:
-        bgt $a2,$t0,fim
-        bgt $a3,$t1,fim
+    loopmerge:
+        bgt $t0,$a2,fim
+        bgt $t1,$a3,fim
             sll $t0,$t0,2
             sll $t1,$t1,2
-            #t2 = v[i]
             add $t2,$a0,$t0
-            #t3 = v[j]
             add $t3,$a0,$t1
-            
-
+            #t2 = v[i]
             lw $t2,0($t2)
+            #t3 = v[j]
             lw $t3,0($t3)
-
             srl $t0,$t0,2
             srl $t1,$t1,2
 
             bgt $t2,$t3,else
             addi $t0,$t0,1
-            j loop
+            j loopmerge
         else:
             add $t4,$t1,$zero
-            
             loop2:
-                beq $t4,$t0,fimloop2
+                ble $t4,$t0,fimloop2
                 sll $t4,$t4,2
                 add $t5,$a0,$t4
                 lw $t6,0($t5)
                 lw $t7,-4($t5)
                 sw $t6,-4($t5)
-                sw $t7, 0($t5)
+                sw $t7,0($t5)
                 srl $t4,$t4,2
                 addi $t4,$t4,-1
+                j loop2
             fimloop2:
                 addi $t0,$t0,1
                 addi $t1,$t1,1
                 addi $a2,$a2,1
-                j loop
-
-
+                j loopmerge
 fim:
-    jr ra
+    jr $ra
