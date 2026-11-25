@@ -23,12 +23,12 @@ mergesort:
     # b0 
     sw $fp,-4($sp)
     addi $fp,$sp,-4
-    addi $sp,$sp,-20
-    sw $ra,0($fp)
-    sw $a0,-4($fp)
-    sw $a1,-8($fp)
-    sw $a2,-12($fp)
-    sw $s0,-16($fp)
+    addi $sp,$sp,-24
+    sw $ra,-4($fp)
+    sw $a0,-8($fp)
+    sw $a1,-12($fp)
+    sw $a2,-16($fp)
+    sw $s0,-20($fp)
 
     #b1
     bge $a1,$a2,retorno
@@ -42,23 +42,23 @@ mergesort:
     jal mergesort
 
     #b4
-    lw $a2,-12($fp)
+    lw $a2,-16($fp)
     addi $a1,$s0,1
     jal mergesort
 
     #b5
-    lw $a1,-8($fp)
+    lw $a1,-12($fp)
     add $a3,$a2,$zero
     add $a2,$s0,$zero
     jal merge
 
     #b6
     retorno:
-    lw $ra,0($fp)
-    lw $a0,-4($fp)
-    lw $a1,-8($fp)
-    lw $a2,-12($fp)
-    lw $s0,-16($fp)
+    lw $ra,-4($fp)
+    lw $a0,-8($fp)
+    lw $a1,-12($fp)
+    lw $a2,-16($fp)
+    lw $s0,-20($fp)
     addi $sp,$fp,4
     lw $fp,-4($sp)
 
